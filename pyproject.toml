@@ -11,4 +11,6 @@ dependencies = [
     "langchain[google-genai,groq,openai]>=0.3.25",
     "pymongo>=4.13.1",
     "python-dotenv>=1.1.0",
+    "streamlit>=1.45.1",
+    "streamlit-extras>=0.7.1",
 ]
