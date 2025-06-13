@@ -9,6 +9,7 @@ dependencies = [
     "langchain-nvidia-ai-endpoints>=0.3.10",
     "langchain-xai>=0.2.4",
     "langchain[google-genai,groq,openai]>=0.3.25",
+    "langgraph>=0.4.8",
     "pymongo>=4.13.1",
     "python-dotenv>=1.1.0",
     "streamlit>=1.45.1",
