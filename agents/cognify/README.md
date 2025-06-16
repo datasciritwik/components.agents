@@ -1,33 +1,82 @@
-# Agent Interaction Flow Diagram
+# Agent Interaction Flow Diagram [Project Path is unclear, that's why on hold]
+- If you're a researcher and don't like reading too many research papers, then plz contact me will do some automation where we try to optimise the overall learning pipeline of knowledge gain by minimising effort.
+- [Email](mailto:officialritwik098@gmail.com)
 
 ```mermaid
 graph TD
-  UserInput[User Input] --> IntentClassifier[Intention Classifier]
+  START((Start)) --> UserInput[User Input]
+  UserInput --> IntentClassifier[Intention Classifier]
 
-  IntentClassifier -->|Explain| Teacher[Teacher Agent]
-  IntentClassifier -->|Ask Doubt| DoubtSolver[Doubt Solver Agent]
-  IntentClassifier -->|Take Test| Examiner[Examiner Agent]
-  IntentClassifier -->|Plan Study| Planner[Planner Agent]
-  IntentClassifier -->|Take Notes| NoteTaker[Note Taker Agent]
+  IntentClassifier -->|Trigger Plan| PlanExecutor[Plan Executor]
+  IntentClassifier -->|Free Input| ActionSelector[Action Selector-RAG]
 
-  Teacher --> CheckConfusion{User Confused?}
-  CheckConfusion -- Yes --> DoubtSolver
-  CheckConfusion -- No --> MemoryManager[Memory Manager]
+  %% Plan executor flows like a proactive agent
+  PlanExecutor --> ActionSelector
 
-  DoubtSolver --> MemoryManager
-  Examiner -->|User struggles| Teacher
-  Examiner --> MemoryManager
-  Planner --> MemoryManager
-  NoteTaker --> MemoryManager
+  %% Central decision-making unit
+  ActionSelector -->|Explain| Teacher[Teacher Agent]
+  ActionSelector -->|Ask Doubt| DoubtSolver[Doubt Solver Agent]
+  ActionSelector -->|Take Test| Examiner[Examiner Agent]
+  ActionSelector -->|Plan Study| Planner[Planner Agent]
+  ActionSelector -->|Take Notes| NoteTaker[Note Taker Agent]
+  ActionSelector -->|Unknown| Fallback[Fallback / Direct to Output]
 
-  MemoryManager --> TokenCheck{STM Token Limit Exceeded?}
-  TokenCheck -- Yes --> Summarize[Summarize & Store in LTM]
-  TokenCheck -- No --> ResponseGen[Generate Response]
+  %% Agent interaction outcomes
+  Teacher --> CheckConfusion{Is User Still Confused?}
+  CheckConfusion -->|Yes| DoubtSolver
+  CheckConfusion -->|No| IntermediateMemory[Memory Manager]
 
-  Summarize --> ResponseGen
-  ResponseGen --> UserOutput[Output to User]
+  DoubtSolver --> IntermediateMemory
+  Examiner -->|User Struggles| Teacher
+  Examiner --> IntermediateMemory
+  Planner --> IntermediateMemory
+  NoteTaker --> IntermediateMemory
+  Fallback --> IntermediateMemory
 
+  %% Memory & summarization logic
+  IntermediateMemory --> TokenCheck{STM Token Limit Exceeded?}
+  TokenCheck -->|Yes| Summarizer[Summarize & Store in LTM]
+  TokenCheck -->|No| Refiner[Summarize & Correct Output]
+
+  Summarizer --> Refiner
+
+  %% Evaluate result quality
+  Refiner --> Evaluator[Evaluate Result Quality]
+  Evaluator -->|Good Enough| UserOutput[Output to User]
+  Evaluator -->|Needs Work| RetryCheck{Retries Left?}
+  RetryCheck -->|Yes| ActionSelector
+  RetryCheck -->|No| UserOutput
+
+  %% Close the loop
   UserOutput -->|Follow-up| UserInput
+  UserOutput --> END((End))
+```
+
+``` mermaid
+flowchart TD
+  START((Start)) --> UserInput[User Provides Topic]
+
+  UserInput --> OutlineGen[Generate High‑Level Outline]
+  OutlineGen --> Approval{User Approves Outline?}
+  
+  Approval -->|No| OutlineEdit[User Updates Suggestions]
+  OutlineEdit --> OutlineGen
+  
+  Approval -->|Yes| LoopStart([Begin Teaching Loop])
+
+  subgraph Loop [Looping Over Each Subtopic]
+    LoopStart --> Teach[Teacher Agent Explains Subtopic]
+    Teach --> Notes[Note Generator Summarizes]
+    Notes --> DepthCheck{Depth Sufficient?}
+    DepthCheck -->|No| AutoQ[Auto‑Generate Deeper Follow‑Up]
+    AutoQ --> Teach
+    DepthCheck -->|Yes| NextSub{More Subtopics?}
+    NextSub -->|Yes| LoopStart
+    NextSub -->|No| LoopEnd([Loop Complete])
+  end
+
+  LoopEnd --> Results[Compile & Return Final Explanation + Notes]
+  Results --> END((End))
 ```
 
 ### Agent Descriptions
