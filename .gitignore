@@ -14,3 +14,15 @@ wheels/
 
 # Experimental dir
 *exp/
+
+# Planning and exuction
+*plan.md
+
+# ipynb
+*.ipynb
+
+# Storage and data
+*.db
+*.sqlite
+storage/
+notebooks/
