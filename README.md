@@ -1,3 +1,39 @@
+# components-agents
+
+A modular agent framework for job search, research, and automation, built with LangChain, Streamlit, and more.
+
+## Features
+- Modular agent architecture
+- Job search and research tools
+- Streamlit UI for chat and code viewing
+- DuckDB for memory and summaries
+- Async crawling and web search
+- Integration with OpenAI, Groq, Tavily, and more
+
+## Installation
+
+```bash
+# Install dependencies
+uv pip install -r requirements.txt
+
+# Or install as a package (will also install playwright browsers)
+uv pip install .
+```
+
+## Playwright Browsers
+
+If you install with pip, Playwright browsers will be installed automatically. If you need to install manually:
+
+```bash
+python -m playwright install
+```
+
+## Requirements
+- Python 3.12+
+
+## License
+MIT
+
 ## Connect any tool and orchestrate working in natural language
 
 ### Job Search Agent
